@@ -1,0 +1,19 @@
+<div class="card mb-4">
+	<div class="card-header">
+		<h5 class="mb-0">Admin</h5>
+	</div>
+	<div class="list-group list-group-flush">
+		<a href="{{ path('app_admin_index') }}" class="list-group-item list-group-item-action {% if app.request.get('_route') == 'app_admin_index' %}active bg-primary{% endif %}">
+			<i class="fas fa-tachometer-alt me-2"></i>
+			Tableau de bord
+		</a>
+		<a href="{{ path('app_admin_category_index') }}" class="list-group-item list-group-item-action {% if app.request.get('_route') starts with 'app_admin_category' %}active bg-primary{% endif %}">
+			<i class="fas fa-folder me-2"></i>
+			Gérer les catégories
+		</a>
+		<a href="{{ path('app_article_index') }}" class="list-group-item list-group-item-action {% if app.request.get('_route') starts with 'app_article' %}active bg-primary{% endif %}">
+			<i class="fas fa-newspaper me-2"></i>
+			Mes articles
+		</a>
+	</div>
+</div>

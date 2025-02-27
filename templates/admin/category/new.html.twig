@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle catégorie
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0">Admin</h5>
+					</div>
+					<div class="list-group list-group-flush">
+						<a href="{{ path('app_admin_category_index') }}" class="list-group-item list-group-item-action">
+							Gérer les catégories
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-9">
+				<div class="card">
+					<div class="card-header">
+						<h5 class="mb-0">Nouvelle catégorie</h5>
+					</div>
+					<div class="card-body">
+						{{ form_start(form) }}
+						{{ form_row(form.name) }}
+						<button class="btn btn-primary">{{ button_label|default('Créer') }}</button>
+						<a href="{{ path('app_admin_index') }}" class="btn btn-secondary">Retour</a>
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+{% endblock %}

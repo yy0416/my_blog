@@ -1,3 +1,96 @@
-body {
-    background-color: skyblue;
+:root {
+    --primary-color: #69314e; /* 导航栏 */
+    --secondary-color: #69314e; /* 按钮 */
+    --text-color: #ffffff; /* 文字 */
+    --light-bg: #d9b8c4; /* 背景 */
+    --card-bg: #ffffff; /* 卡片背景 */
+    --border-color: #69314e; /* 边框 */
+    --hover-color: #8a6579; /* 悬停效果 */
 }
+
+.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.navbar {
+    background-color: var(--primary-color) !important;
+}
+
+.btn-primary, .btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+.btn-link {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    color: var(--hover-color);
+}
+
+.footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: var(--hover-color);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+}
+
+/* 管理员页面样式 */
+.list-group-item-action {
+    color: var(--secondary-color);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.list-group-item-action:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+/* 移除蓝色线条 */
+.list-group-item {
+    border-color: #dee2e6;
+}
+
+/* 页脚链接样式 */
+.footer-link {
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: #d9b8c4 !important;
+}
+
+/* 文章管理按钮 */
+.btn-voir, .btn-lire {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.btn-voir:hover, .btn-lire:hover {
+    background-color: var(--hover-color);
+    border-color: var(--hover-color);
+    color: var(--text-color);
+}
+
+
+

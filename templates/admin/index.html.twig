@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="card mb-4">
+					<div class="card-header">
+						<h5 class="mb-0">Admin</h5>
+					</div>
+					<div class="list-group list-group-flush">
+						<a href="#categories" class="list-group-item list-group-item-action">
+							Gérer les catégories
+						</a>
+						<a href="#articles" class="list-group-item list-group-item-action">
+							Mes Articles
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div
+				class="col-md-9">
+				{# 分类管理部分 #}
+				<div class="card mb-4" id="categories">
+					<div class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-0">Gestion des catégories</h5>
+						<a href="{{ path('app_admin_category_new') }}" class="btn btn-primary btn-sm">
+							Ajouter une catégorie
+						</a>
+					</div>
+					<div class="card-body">
+						{% for message in app.flashes('success') %}
+							<div class="alert alert-success">
+								{{ message }}
+							</div>
+						{% endfor %}
+
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Nom</th>
+										<th>Slug</th>
+										<th>Articles</th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for category in categories %}
+										<tr>
+											<td>{{ category.name }}</td>
+											<td>{{ category.slug }}</td>
+											<td>{{ category.articles|length }}</td>
+											<td>
+												<div class="btn-group">
+													<a href="{{ path('app_admin_category_edit', {'id': category.id}) }}" class="btn btn-sm btn-outline-secondary">
+														Modifier
+													</a>
+													<form method="post" action="{{ path('app_admin_category_delete', {'id': category.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');" style="display: inline-block">
+														<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+														<button class="btn btn-sm btn-outline-danger">Supprimer</button>
+													</form>
+												</div>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucune catégorie trouvée</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				{# 文章管理部分 #}
+				<div class="card" id="articles">
+					<div class="card-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-0">Mes Articles</h5>
+						<a href="{{ path('app_article_new') }}" class="btn btn-primary btn-sm">
+							Nouvel article
+						</a>
+					</div>
+					<div class="card-body">
+						{% if articles is empty %}
+							<p>Vous n'avez pas encore écrit d'articles.</p>
+						{% else %}
+							<div class="table-responsive">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Titre</th>
+											<th>Date de création</th>
+											<th>Commentaires</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for article in articles %}
+											<tr>
+												<td>{{ article.title }}</td>
+												<td>{{ article.createdAt|date('d/m/Y') }}</td>
+												<td>{{ article.comments|length }}</td>
+												<td>
+													<div class="btn-group">
+														<a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-sm btn-outline-primary">
+															Voir
+														</a>
+														<a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">
+															Modifier
+														</a>
+													</div>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

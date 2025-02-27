@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Articles avec le tag #{{ tag.name }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>Articles avec le tag #{{ tag.name }}</h1>
+
+		<div class="row mt-4">
+			{% for article in articles %}
+				<div class="col-md-4 mb-4">
+					<div class="card h-100">
+						<div class="card-body">
+							<h5 class="card-title">{{ article.title }}</h5>
+							<p class="card-text">
+								{{ article.content|striptags|slice(0, 100) }}
+								{% if article.content|length > 100 %}...
+								{% endif %}
+							</p>
+						</div>
+						<div class="card-footer bg-transparent border-top-0">
+							<a href="{{ path('app_article_show', {'id': article.id}) }}" class="btn btn-primary btn-sm">
+								Lire la suite
+							</a>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-12">
+					<p>Aucun article trouvé avec ce tag.</p>
+				</div>
+			{% endfor %}
+		</div>
+
+		<div class="mt-4">
+			<a href="{{ path('app_home') }}" class="btn btn-secondary">
+				<i class="fas fa-arrow-left"></i>
+				Retour
+			</a>
+		</div>
+	</div>
+{% endblock %}

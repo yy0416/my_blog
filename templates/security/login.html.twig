@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-5">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header">
+						<h1 class="h3 mb-3 font-weight-normal">Connexion</h1>
+					</div>
+					<div class="card-body">
+						<form method="post" action="{{ path('app_login') }}">
+							{% if error %}
+								<div class="alert alert-danger">
+									{{ error.messageKey|trans(error.messageData, 'security') }}
+									{% if app.environment == 'dev' %}
+										<br>Debug:
+										{{ error.message }}
+									{% endif %}
+								</div>
+							{% endif %}
+
+							<div class="form-group">
+								<label for="inputUsername">Email</label>
+								<input type="text" value="{{ last_username }}" name="_username" id="inputUsername" class="form-control" required autofocus>
+							</div>
+
+							<div class="form-group">
+								<label for="inputPassword">Mot de passe</label>
+								<input type="password" name="_password" id="inputPassword" class="form-control" required>
+							</div>
+
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+							<button class="btn btn-lg btn-primary btn-block mt-3" type="submit">
+								<i class="fas fa-sign-in-alt me-2"></i>Se connecter
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
