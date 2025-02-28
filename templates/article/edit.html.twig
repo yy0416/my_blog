@@ -45,24 +45,18 @@
 				<div class="tag-container" id="tag-container"></div>
 				{{ form_widget(form.tags) }}
 
-				<div class="mt-4">
-					<button type="submit" class="btn btn-primary">
-						<i class="fas fa-save"></i>
-						Enregistrer
-					</button>
-					<a href="{{ path('app_article_index') }}" class="btn btn-secondary">
-						<i class="fas fa-arrow-left"></i>
-						Retour à la liste
-					</a>
+				<div class="d-flex justify-content-between">
+					<a href="{{ path('app_article_index') }}" class="btn btn-secondary">Retour à la liste</a>
+					<button type="submit" class="btn btn-primary">Enregistrer</button>
 				</div>
 				{{ form_end(form) }}
+
+				<form id="delete-article-form" method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" class="mt-3">
+					<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+					<button id="delete-article-btn" type="button" class="btn btn-danger">Supprimer</button>
+				</form>
 			</div>
 		</div>
-
-		<form method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');" class="mt-3">
-			<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
-			<button class="btn btn-danger">Supprimer</button>
-		</form>
 	</div>
 {% endblock %}
 
@@ -195,6 +189,14 @@ addTagBadge(response.tag.name, response.tag.id);
 }
 });
 $(this).val('');
+}
+});
+
+// 处理删除按钮点击
+$('#delete-article-btn').on('click', function (e) {
+e.preventDefault();
+if (confirm('Êtes-vous sûr de vouloir supprimer cet article?')) {
+$('#delete-article-form').submit();
 }
 });
 });

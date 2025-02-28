@@ -20,7 +20,16 @@
 							<div class="alert alert-success" role="alert">{{ flash_success }}</div>
 						{% endfor %}
 
-						{{ form_start(registrationForm) }}
+						{{ form_start(registrationForm, {'attr': {'data-turbo': 'false'}}) }}
+						{{ form_row(registrationForm._token) }}
+						{{ form_row(registrationForm.email, {
+								'label': 'Email',
+								'attr': {
+									'class': 'form-control mb-3',
+									'placeholder': 'Entrez votre email'
+								}
+							}) }}
+
 						{{ form_row(registrationForm.username, {
 								'label': 'Nom d\'utilisateur',
 								'attr': {
@@ -38,7 +47,9 @@
 							}) }}
 
 						{{ form_row(registrationForm.agreeTerms, {
-								'label': 'J\'accepte les conditions d\'utilisation'
+								'label': 'J\'accepte les conditions d\'utilisation',
+								'attr': {'class': 'form-check-input'},
+								'label_attr': {'class': 'form-check-label'}
 							}) }}
 
 						<button type="submit" class="btn btn-primary w-100">

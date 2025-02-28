@@ -1,0 +1,38 @@
+# 通用消息
+"Save": "Enregistrer"
+"Cancel": "Annuler"
+"Delete": "Supprimer"
+"Edit": "Modifier"
+"Create": "Créer"
+"Back": "Retour"
+"Submit": "Soumettre"
+"Search": "Rechercher"
+"No results found": "Aucun résultat trouvé"
+"Actions": "Actions"
+
+# 用户相关
+"Username": "Nom d'utilisateur"
+"Password": "Mot de passe"
+"Email": "Email"
+"Register": "S'inscrire"
+"Login": "Connexion"
+"Logout": "Déconnexion"
+"Profile": "Profil"
+"Remember me": "Se souvenir de moi"
+
+# 文章相关
+"Title": "Titre"
+"Content": "Contenu"
+"Category": "Catégorie"
+"Tags": "Tags"
+"Author": "Auteur"
+"Created at": "Créé le"
+"Updated at": "Mis à jour le"
+"Comments": "Commentaires"
+"Add comment": "Ajouter un commentaire"
+"Reply": "Répondre"
+
+# 错误消息
+"This value should not be blank.": "Cette valeur ne doit pas être vide."
+"This value is not valid.": "Cette valeur n'est pas valide."
+"This value is already used.": "Cette valeur est déjà utilisée."

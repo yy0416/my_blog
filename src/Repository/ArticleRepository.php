@@ -53,9 +53,11 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('a')
             ->leftJoin('a.category', 'c')
+            ->leftJoin('a.tags', 't')
             ->where('a.title LIKE :query')
             ->orWhere('a.content LIKE :query')
             ->orWhere('c.name LIKE :query')
+            ->orWhere('t.name LIKE :query')
             ->setParameter('query', '%' . $query . '%')
             ->orderBy('a.createdAt', 'DESC')
             ->getQuery()

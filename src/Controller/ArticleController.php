@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\Tag;
 use App\Form\ArticleType;
 use App\Form\CommentType;
 use App\Repository\ArticleRepository;
@@ -13,10 +14,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Psr\Log\LoggerInterface;
 
 #[Route('/article')]
 class ArticleController extends AbstractController
 {
+    private LoggerInterface $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     #[Route('/', name: 'app_article_index', methods: ['GET'])]
     public function index(Request $request, ArticleRepository $articleRepository): Response
     {
@@ -49,6 +58,24 @@ class ArticleController extends AbstractController
             // 确保 slug 已设置
             if (!$article->getSlug()) {
                 $article->setSlug($this->slugify($article->getTitle()));
+            }
+
+            // 确保标签被正确处理
+            $tagInput = $form->get('tagInput')->getData();
+            if ($tagInput) {
+                $tags = explode(',', $tagInput);
+                foreach ($tags as $tagName) {
+                    $tagName = trim($tagName);
+                    if (!empty($tagName)) {
+                        $tag = $entityManager->getRepository(Tag::class)->findOneBy(['name' => $tagName]);
+                        if (!$tag) {
+                            $tag = new Tag();
+                            $tag->setName($tagName);
+                            $entityManager->persist($tag);
+                        }
+                        $article->addTag($tag);
+                    }
+                }
             }
 
             // 调试信息
@@ -103,9 +130,13 @@ class ArticleController extends AbstractController
         $article->incrementViews();
         $entityManager->flush();
 
-        // 创建主评论表单
+        // 确保标签被加载
+        $tags = $article->getTags()->toArray(); // 强制加载标签
+
+        // 创建评论表单
         $comment = new Comment();
         $comment->setArticle($article);
+
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
@@ -126,8 +157,6 @@ class ArticleController extends AbstractController
                 'attr' => ['class' => 'reply-form']
             ])->createView();
         };
-
-
 
         return $this->render('article/show.html.twig', [
             'article' => $article,
@@ -156,17 +185,35 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_article_delete', methods: ['POST'])]
+    #[Route('/{id}/delete', name: 'app_article_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-        if ($article->getAuthor() !== $this->getUser()) {
+        // 检查当前用户是否是文章作者或管理员
+        if (!$this->isGranted('ROLE_ADMIN') && $article->getAuthor() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à supprimer cet article.');
         }
 
+        // 调试信息
+        $token = $request->request->get('_token');
+        $expectedToken = $this->container->get('security.csrf.token_manager')->getToken('delete' . $article->getId())->getValue();
+        $this->logger->info('Delete article attempt', [
+            'article_id' => $article->getId(),
+            'received_token' => $token,
+            'expected_token' => $expectedToken,
+            'is_valid' => $this->isCsrfTokenValid('delete' . $article->getId(), $token)
+        ]);
+
+        // 检查 CSRF 令牌
         if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
+            // 删除文章
             $entityManager->remove($article);
             $entityManager->flush();
+
+            // 添加成功消息
+            $this->addFlash('success', 'L\'article a été supprimé avec succès.');
+        } else {
+            $this->addFlash('error', 'Jeton CSRF invalide.');
         }
 
         return $this->redirectToRoute('app_article_index');

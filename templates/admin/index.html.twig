@@ -114,6 +114,10 @@
 														<a href="{{ path('app_article_edit', {'id': article.id}) }}" class="btn btn-sm btn-outline-secondary">
 															Modifier
 														</a>
+														<form method="post" action="{{ path('app_article_delete', {'id': article.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article?');" style="display: inline-block">
+															<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+															<button class="btn btn-sm btn-outline-danger">Supprimer</button>
+														</form>
 													</div>
 												</td>
 											</tr>
@@ -127,4 +131,39 @@
 			</div>
 		</div>
 	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+const deleteButtons = document.querySelectorAll('.delete-article-btn');
+
+deleteButtons.forEach(function (button) {
+button.addEventListener('click', function () {
+const articleId = this.getAttribute('data-id');
+const token = this.getAttribute('data-token');
+
+console.log('Delete button clicked for article ID:', articleId);
+
+if (confirm('Êtes-vous sûr de vouloir supprimer cet article?')) {
+console.log('Confirmed deletion');
+
+const form = document.createElement('form');
+form.method = 'POST';
+form.action = '/article/' + articleId + '/delete';
+
+const tokenInput = document.createElement('input');
+tokenInput.type = 'hidden';
+tokenInput.name = '_token';
+tokenInput.value = token;
+
+form.appendChild(tokenInput);
+document.body.appendChild(form);
+form.submit();
+}
+});
+});
+});
+	</script>
 {% endblock %}
