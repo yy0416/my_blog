@@ -30,14 +30,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         $username = $request->request->get('_username');
         $password = $request->request->get('_password');
 
-        // 添加更详细的调试信息
-        dump('Login attempt details:', [
-            'username' => $username,
-            'password exists' => !empty($password),
-            'csrf_token' => $request->request->get('_csrf_token'),
-            'session' => $request->getSession()->all()
-        ]);
-
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
 
         return new Passport(
@@ -52,21 +44,15 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        dump('Authentication success:', [
-            'user' => $token->getUser()->getUserIdentifier(),
-            'roles' => $token->getUser()->getRoles()
-        ]);
+        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
+            return new RedirectResponse($targetPath);
+        }
 
         return new RedirectResponse($this->urlGenerator->generate('app_home'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
-        dump('Authentication failure:', [
-            'error' => $exception->getMessage(),
-            'code' => $exception->getCode()
-        ]);
-
         return parent::onAuthenticationFailure($request, $exception);
     }
 

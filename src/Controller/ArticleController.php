@@ -78,10 +78,6 @@ class ArticleController extends AbstractController
                 }
             }
 
-            // 调试信息
-            dump($form->getData());
-            dump($form->getErrors(true, true));
-
             $entityManager->persist($article);
             $entityManager->flush();
 

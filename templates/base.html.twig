@@ -10,102 +10,211 @@
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-		<link href="{{ asset('styles/app.css') }}" rel="stylesheet">
-		<meta name="turbo-visit-control" content="reload"> {% block stylesheets %}{% endblock %}
 
-		{% block javascripts %}
-			{% block importmap %}
-				{{ importmap('app') }}
-			{% endblock %}
-			<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		{% endblock %}
-	</head>
-	<body>
-		<div class="d-flex flex-column min-vh-100">
-			<div class="flex-grow-1">
-				<nav class="navbar navbar-expand-lg navbar-dark mb-4">
-					<div class="container">
-						<a class="navbar-brand" href="{{ path('app_home') }}">Yuan's Blog</a>
-						<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-							<span class="navbar-toggler-icon"></span>
-						</button>
-						<div class="collapse navbar-collapse" id="navbarNav">
-							<ul class="navbar-nav me-auto"></ul>
-							<form class="d-flex me-3" action="{{ path('app_search') }}" method="get">
-								<input class="form-control me-2" type="search" name="q" placeholder="Rechercher..." aria-label="Search">
-								<button class="btn btn-outline-light" type="submit">
-									Rechercher
-								</button>
-							</form>
+		<style>:root
+		{
+			--primary-color: #69314e; /* 导航栏 */
+			--secondary-color: #69314e; /* 按钮 */
+			--text-color: #ffffff; /* 文字 */
+			--light-bg: #d9b8c4; /* 背景 */
+			--card-bg: #ffffff; /* 卡片背景 */
+			--border-color: #69314e; /* 边框 */
+			--hover-color: #8a6579; /* 悬停效果 */
+		}
 
+		.bg-primary {
+			background-color: var(--primary-color) !important;
+		}
 
-							<ul class="navbar-nav">
-								{% if app.user %}
-									<li class="nav-item">
-										{% if is_granted('ROLE_ADMIN') %}
-											<li class="nav-item">
-												<a class="nav-link" href="{{ path('app_admin_index') }}">
-													Admin
-												</a>
-											</li>
-										{% endif %}
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
-									</li>
-								{% else %}
-									<li class="nav-item">
-										<a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
-									</li>
-									<li class="nav-item">
-										<a class="nav-link" href="{{ path('app_register') }}">Inscription</a>
-									</li>
-								{% endif %}
-							</ul>
-						</div>
-					</div>
-				</nav>
+		.navbar {
+			background-color: var(--primary-color) !important;
+		}
 
-				{% block body %}{% endblock %}
-			</div>
+		.btn-primary,
+		.btn-secondary {
+			background-color: var(--secondary-color);
+			border-color: var(--secondary-color);
+			color: var(--text-color);
+		}
 
-			<footer class="bg-primary text-white py-4 mt-5">
+		.btn-primary:hover,
+		.btn-secondary:hover {
+			background-color: var(--hover-color);
+			border-color: var(--hover-color);
+			color: var(--text-color);
+		}
+
+		.btn-link {
+			color: var(--secondary-color);
+			text-decoration: none;
+		}
+
+		.btn-link:hover {
+			color: var(--hover-color);
+		}
+
+		.footer a {
+			color: var(--secondary-color);
+			text-decoration: none;
+		}
+
+		body {
+			font-family: 'Poppins', sans-serif;
+			background-color: var(--light-bg);
+		}
+
+		/* 页脚链接样式 */
+		.footer-link {
+			transition: color 0.3s ease;
+		}
+
+		.footer-link:hover {
+			color: #d9b8c4 !important;
+		}
+
+		/* Summernote 所需的 Bootstrap 4 样式 */
+		.tooltip {
+			position: absolute;
+			z-index: 1070;
+			display: block;
+			margin: 0;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 1.5;
+			text-align: left;
+			text-decoration: none;
+			text-shadow: none;
+			text-transform: none;
+			letter-spacing: normal;
+			word-break: normal;
+			word-spacing: normal;
+			white-space: normal;
+			line-break: auto;
+			font-size: 0.875rem;
+			word-wrap: break-word;
+			opacity: 0;
+		}
+
+		.popover {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 1060;
+			display: block;
+			max-width: 276px;
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 1.5;
+			text-align: left;
+			text-decoration: none;
+			text-transform: none;
+			letter-spacing: normal;
+			word-break: normal;
+			word-spacing: normal;
+			white-space: normal;
+			line-break: auto;
+			font-size: 0.875rem;
+			word-wrap: break-word;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid rgba(0, 0, 0, 0.2);
+			border-radius: 0.3rem;
+		}
+	</style>
+
+	{% block stylesheets %}{% endblock %}
+
+	{% block javascripts %}
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	{% endblock %}
+</head>
+<body>
+	<div class="d-flex flex-column min-vh-100">
+		<div class="flex-grow-1">
+			<nav class="navbar navbar-expand-lg navbar-dark mb-4">
 				<div class="container">
-					<div class="row">
-						<div class="col-md-12 text-center">
-							<div class="mb-3">
-								<a href="https://github.com/yy0416" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
-									<i class="fab fa-github fa-2x"></i>
-									<span class="ms-2">GitHub</span>
-								</a>
-								<a href="https://yuany.fr" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
-									<i class="fas fa-briefcase fa-2x"></i>
-									<span class="ms-2">Portfolio</span>
-								</a>
-								<a href="https://makeorders.yuany.fr" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
-									<i class="fas fa-shopping-cart fa-2x"></i>
-									<span class="ms-2">Shop</span>
-								</a>
-							</div>
-						</div>
-					</div>
-					<div class="text-center mt-3 text-white">
-						<p>&copy;
-							{{ "now"|date("Y") }}
-							Yuan's Blog. Tous droits réservés.</p>
+					<a class="navbar-brand" href="{{ path('app_home') }}">Yuan's Blog</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarNav">
+						<ul class="navbar-nav me-auto"></ul>
+						<form class="d-flex me-3" action="{{ path('app_search') }}" method="get">
+							<input class="form-control me-2" type="search" name="q" placeholder="Rechercher..." aria-label="Search">
+							<button class="btn btn-outline-light" type="submit">
+								Rechercher
+							</button>
+						</form>
+
+
+						<ul class="navbar-nav">
+							{% if app.user %}
+								<li class="nav-item">
+									{% if is_granted('ROLE_ADMIN') %}
+										<li class="nav-item">
+											<a class="nav-link" href="{{ path('app_admin_index') }}">
+												Admin
+											</a>
+										</li>
+									{% endif %}
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+								</li>
+							{% else %}
+								<li class="nav-item">
+									<a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="{{ path('app_register') }}">Inscription</a>
+								</li>
+							{% endif %}
+						</ul>
 					</div>
 				</div>
-			</footer>
+			</nav>
+
+			{% block body %}{% endblock %}
 		</div>
 
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-		<script src="{{ asset('js/comment.js') }}"></script>
-		<script>
-			console.log('Comment JS loaded');
+		<footer class="bg-primary text-white py-4 mt-5">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<div class="mb-3">
+							<a href="https://github.com/yy0416" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
+								<i class="fab fa-github fa-2x"></i>
+								<span class="ms-2">GitHub</span>
+							</a>
+							<a href="https://yuany.fr" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
+								<i class="fas fa-briefcase fa-2x"></i>
+								<span class="ms-2">Portfolio</span>
+							</a>
+							<a href="https://makeorders.yuany.fr" class="text-white mx-3 text-decoration-none footer-link" target="_blank">
+								<i class="fas fa-shopping-cart fa-2x"></i>
+								<span class="ms-2">Shop</span>
+							</a>
+						</div>
+					</div>
+				</div>
+				<div class="text-center mt-3 text-white">
+					<p>&copy;
+						{{ "now"|date("Y") }}
+						Yuan's Blog. Tous droits réservés.</p>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script src="{{ asset('js/comment.js') }}"></script>
+	<script>
+		console.log('Comment JS loaded');
 document.addEventListener('DOMContentLoaded', function () {
 console.log('DOM loaded, reply buttons:', document.querySelectorAll('.reply-button').length);
 });
-		</script>
+	</script>
 
-	</body>
-</html>
+</body></html>

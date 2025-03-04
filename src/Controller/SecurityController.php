@@ -12,29 +12,19 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // 获取请求和会话
-        $request = $this->container->get('request_stack')->getCurrentRequest();
-        $session = $request->getSession();
-
-        // 调试信息
-        dump([
-            'current_user' => $this->getUser(),
-            'error' => $authenticationUtils->getLastAuthenticationError(),
-            'last_username' => $authenticationUtils->getLastUsername(),
-            'session' => $session->all(),
-            'request' => $request->request->all()
-        ]);
-
-        if ($error = $authenticationUtils->getLastAuthenticationError()) {
-            dump('Authentication error:', [
-                'message' => $error->getMessage(),
-                'trace' => $error->getTraceAsString()
-            ]);
+        // 如果用户已经登录，重定向到首页
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
         }
 
+        // 获取上次登录错误（如果有）
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // 获取上次输入的用户名
+        $lastUsername = $authenticationUtils->getLastUsername();
+
         return $this->render('security/login.html.twig', [
-            'error' => $authenticationUtils->getLastAuthenticationError(),
-            'last_username' => $authenticationUtils->getLastUsername(),
+            'error' => $error,
+            'last_username' => $lastUsername,
         ]);
     }
 
